@@ -5,7 +5,10 @@ RSpec.describe TextfileStats do
     expect(TextfileStats::VERSION).not_to be nil
   end
 
-  it "does something useful" do
-    expect(false).to eq(true)
+  describe '.word_count' do
+    it 'returns the number of words in a text file' do 
+      file = File.expand_path('spec/fixtures/test_file.txt')
+      expect(TextfileStats.word_count(file)).to eq 4
+    end
   end
 end
