@@ -3,17 +3,18 @@ use std::io::{BufRead, BufReader};
 use std::fs::{File, self};
 
 fn word_count(file_path: String) -> Result<u32, Error> {
-    if let Err(e) = File::open(file_path.clone())  {
-        return Err(Error::new(exception::io_error(), e.to_string()));    
-    }
+    
+    let file = match File::open(file_path.clone()) {
+        Ok(file) => file,
+        Err(e) => return Err(Error::new(exception::io_error(), e.to_string()))
 
+    };
+    
     let f_size = file_size(file_path.clone());
 
     if f_size == 0 {
         return Err(Error::new(exception::standard_error(), "File is empty".to_string()))
     }
-
-    let file = File::open(file_path).unwrap();
 
     let reader = BufReader::new(file);
     let mut word_count = 0u32;
