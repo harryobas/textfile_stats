@@ -11,4 +11,10 @@ RSpec.describe TextfileStats do
       expect(TextfileStats.word_count(file)).to eq 4
     end
   end
+  context 'when file is empty' do 
+    it 'raises error' do 
+      file = File.expand_path('spec/fixtures/empty_test_file.txt')
+      expect{TextfileStats.word_count(file)}.to raise_error(StandardError)
+    end
+  end
 end
