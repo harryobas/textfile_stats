@@ -17,4 +17,10 @@ RSpec.describe TextfileStats do
       expect{TextfileStats.word_count(file)}.to raise_error(StandardError)
     end
   end
+  context 'when file is not found' do
+    it 'raises error' do
+      file = File.expand_path('spec/fixtires/no_text_file.txt')
+      expect{TextfileStats.word_count(file)}.to raise_error(IOError)
+    end
+  end
 end
