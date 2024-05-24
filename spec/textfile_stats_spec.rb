@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
+
 RSpec.describe TextfileStats do
 
   let(:file) { File.expand_path('spec/fixtures/test_file.txt') }
   let(:empty_file) { File.expand_path('spec/fixtures/empty_test_file.txt')}
+  let(:not_text_file) { File.expand_path('spec/fixtures/not_text_test_file.pdf')}
 
   it "has a version number" do
     expect(TextfileStats::VERSION).not_to be nil
@@ -21,14 +24,39 @@ RSpec.describe TextfileStats do
   end
   context 'when file is not found' do
     it 'raises error' do
-      file = File.expand_path('spec/fixtires/no_text_file.txt')
+      file = File.expand_path('spec/fixtures/no_text_file.txt')
       expect{TextfileStats.words_count(file)}.to raise_error(IOError)
     end
   end
-  describe 'chars_count' do 
+  context 'when file is not a text file' do
+    it 'raises error' do
+      expect{TextfileStats.words_count(not_text_file)}.to raise_error(StandardError)
+    end
+  end
+  describe '.chars_count' do 
     it 'returns the number of characters in a text file' do 
       expect(TextfileStats.chars_count(file)).to eq  1842499
-
     end
+  end
+  context 'when file is empty' do
+    it 'raises error' do 
+      expect{TextfileStats.chars_count(empty_file)}.to raise_error(StandardError)
+    end
+  end
+  context 'when file is not found' do
+    it 'raises error' do
+      file = File.expand_path('spec/fixtures/no_text_file.txt')
+      expect{TextfileStats.chars_count(file)}.to raise_error(IOError)
+    end
+  end
+  context 'when file is not a text file' do
+    it 'raises error' do
+      expect{TextfileStats.chars_count(not_text_file)}.to raise_error(StandardError)
+    end
+  end
+  describe '.lines_count' do
+    it 'returns the number of lines in a text file' do 
+      expect(TextfileStats.lines_count(file)).to eq 5697
+    end 
   end
 end
