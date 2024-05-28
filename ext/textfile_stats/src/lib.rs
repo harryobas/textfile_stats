@@ -3,8 +3,6 @@ use std::io::{BufRead, BufReader, Read};
 use std::fs::{File, self};
 use content_inspector::{inspect, ContentType};
 use stopwords::{Language, Spark, Stopwords};
-use std::collections::HashSet;
-
 
 fn words_count(file_path: String) -> Result<u32, Error> {
 
