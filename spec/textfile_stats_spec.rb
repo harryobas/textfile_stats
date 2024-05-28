@@ -59,9 +59,17 @@ RSpec.describe TextfileStats do
       expect(TextfileStats.lines_count(file)).to eq 5697 
     end 
   end
-  describe '.extract_keywords' do
-    it 'extracts keywords from a text file' do 
-      expect(TextfileStats.extract_keywords(file)).to eq ["the", "quick", "brown", "fox", "jumped", "over", "the", "lazy", "dog"]
+  
+  describe '.word_count' do
+    it 'counts the number of a single word in a text file' do 
+      expect(TextfileStats.word_count(file, 'Lorem' )).to eq 281
     end
   end
+
+  describe '.char_count' do
+    it 'counts the number of a single character in a text file' do 
+      expect(TextfileStats.char_count(file, 'e')).to eq 203464
+    end
+  end
+  
 end

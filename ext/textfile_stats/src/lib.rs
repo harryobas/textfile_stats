@@ -3,6 +3,7 @@ use std::io::{BufRead, BufReader, Read};
 use std::fs::{File, self};
 use content_inspector::{inspect, ContentType};
 use stopwords::{Language, Spark, Stopwords};
+use std::collections::HashSet;
 
 
 fn words_count(file_path: String) -> Result<u32, Error> {
@@ -120,6 +121,83 @@ fn lines_count(file_path: String) -> Result<u32, Error> {
     Ok(count)
 }
 
+fn word_count(file_path: String, word: String) -> Result<u32, Error> {
+    let file = File::open(file_path.clone())
+    .map_err(
+        |e| Error::new(
+            exception::io_error(), 
+            e.to_string()
+        )
+    )?;
+
+    let f_size = file_size(file_path.clone())?;
+
+    if f_size == 0 {
+        return Err(
+            Error::new(exception::standard_error(),
+             "File is empty".to_string()))
+        
+    }
+
+    if is_binary_file(file_path.clone()) {
+        return Err(
+            Error::new(exception::standard_error(),
+             "Not a text file".to_string()))
+        
+    }
+
+    let reader = BufReader::new(file);
+    let mut count = 0u32;
+
+    for line in reader.lines() {
+        if let Ok(line) = line {
+            count += line.split_whitespace().filter(|w| w == &word).count() as u32;
+        }
+    }
+
+   Ok (count)
+}
+
+fn char_count(file_path: String, chracter: char) -> Result<u32, Error> {
+    let file = File::open(file_path.clone())
+    .map_err(
+        |e| Error::new(
+            exception::io_error(), 
+            e.to_string()
+        )
+    )?;
+
+    let f_size = file_size(file_path.clone())?;
+
+    if f_size == 0 {
+        return Err(
+            Error::new(exception::standard_error(),
+             "File is empty".to_string()))
+        
+    }
+
+    if is_binary_file(file_path.clone()) {
+        return Err(
+            Error::new(exception::standard_error(),
+             "Not a text file".to_string()))
+        
+    }
+
+    let reader = BufReader::new(file);
+    let mut count = 0u32;
+
+    for line in reader.lines() {
+        if let Ok(line) = line {
+            line
+            .split_whitespace()
+            .for_each(|w| count += w.chars().filter(|c| c == &chracter).count() as u32);
+        }
+    
+    }
+
+    Ok(count)
+}
+
 fn extract_keywords(file_path: String) -> Result<Vec<String>, Error> {
 
     let text = fs::read_to_string(file_path.clone())
@@ -199,6 +277,8 @@ fn init() -> Result<(), Error> {
     module.define_singleton_method("words_count", function!(words_count, 1))?;
     module.define_singleton_method("chars_count", function!(chars_count, 1))?;
     module.define_singleton_method("lines_count", function!(lines_count, 1))?;
+    module.define_singleton_method("word_count", function!(word_count, 2))?;
+    module.define_singleton_method("char_count", function!(char_count, 2))?;
     module.define_singleton_method("extract_keywords", function!(extract_keywords, 1))?;
     module.define_private_method("file_size", function!(file_size, 1))?;
     module.define_private_method("is_binary_file", function!(is_binary_file, 1))?;
